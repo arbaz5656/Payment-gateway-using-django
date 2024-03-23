@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+     <meta charset="UTF-8">
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <title>cart</title>
+
+</head>
+<body>
+<!--navbar-->
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <a class="navbar-brand" href="/">Bismillah</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
+    <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+      <li class="nav-item active">
+        <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#">About</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#">Menu</a>
+      </li>
+    </ul>
+      <div style="margin:0px 0px 0px 900px">
+          <a href="cart" class="btn btn-primary"><i style="font-size:24px" class="fa">&#xf07a;</i> :{{request.user.get_cart_count}}</a>
+      </div>
+      <div style="margin:0px 0px 0px 9px">
+                <a href="order" class="btn btn-success"><i class="fa-brands fa-amazon-pay"></i></a>
+      </div>
+  </div>
+
+</nav>
+
+<br>
+<br>
+<!--Table-->
+<div class="container">
+<table class="table">
+  <thead class="thead-light">
+    <tr>
+      <th scope="col">SR.NO</th>
+      <th scope="col">Action</th>
+      <th scope="col">Item</th>
+      <th scope="col">Name</th>
+      <th scope="col">Price</th>
+      <th scope="col">Qty</th>
+      <th scope="col">Total</th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for i in carts.cart_items.all%}
+    <tr>
+      <th scope="row">{{forloop.counter}}</th>
+        <th><a href="{%url 'delete_items' i.uid %}" class="btn btn-danger"><i class="fa fa-trash" aria-hidden="true"></i></a></th>
+      <td><img src="/media/{{i.rice.images}}" style="heigt:100px;width:100px;"></td>
+      <td>{{i.rice.category.category_name}} | {{i.rice.Rice_name}}</td>
+      <td>{{i.rice.price}}</td>
+      <td>1</td>
+      <td>{{i.rice.price}}</td>
+        {% endfor %}
+    </tr>
+  <tr>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td><b>Grand Total:</b><div>
+                <a href="order" class="btn btn-success" id="paymentbutton"><i class="fa-brands fa-amazon-pay"> : {{ carts.get_total }}</i></a>
+      </div></td>
+
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<!-- payment.html -->
+        <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+        <script>
+            var options = {
+                "key": "{{api_key}}",
+                "amount": "{{ carts.get_total }}",
+                "currency": "INR",
+                "name": "Bismillah",
+                "description": "Test Payment",
+                "order_id": "{{payment_id}}",
+                "handler": function (response){
+                    alert('Payment successful!');
+                },
+                "prefill": {
+                    "name": "arbaz",
+                    "email": "shaikhsufi8691@gmail.com"
+                }
+            };
+            var rzp = new Razorpay(options);
+            document.getElementById('paymentbutton').onclick = function(e){
+                rzp.open();
+                e.preventDefault();
+            };
+
+        </script>
+</body>
+</html>
